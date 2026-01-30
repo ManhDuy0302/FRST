@@ -19,3 +19,14 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Vite generated
+vite.config.d.ts
+vite.config.d.ts.map
+vite.config.js
+
+# Build output
+dist

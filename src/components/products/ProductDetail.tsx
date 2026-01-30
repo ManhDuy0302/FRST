@@ -184,7 +184,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
                         </p>
                         <Link to="/contact">
                             <Button
-                                variant="white"
+                                variant="ctaOutline"
                                 size="lg"
                                 className="shadow-xl hover:shadow-2xl"
                             >
