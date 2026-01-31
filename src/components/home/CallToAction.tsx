@@ -88,7 +88,7 @@ const CallToAction: React.FC = () => {
                         </div>
                         <div className="text-center">
                             <div className="mb-1 text-3xl font-bold text-white md:text-4xl">
-                                <CountUp end={100} suffix="K+" />
+                                <CountUp end={1000} suffix="+" />
                             </div>
                             <div className="text-sm text-gray-400">Khuôn mặt</div>
                         </div>

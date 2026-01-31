@@ -62,7 +62,7 @@ const CompanyOverview: React.FC = () => {
                                 </div>
                                 <div className="group text-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                                     <div className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 mb-2 group-hover:scale-110 transition-transform duration-300">
-                                        <CountUp end={100} suffix="K+" />
+                                        <CountUp end={1000} suffix="+" />
                                     </div>
                                     <div className="text-sm text-gray-600">Khuôn Mặt Hỗ Trợ</div>
                                 </div>
