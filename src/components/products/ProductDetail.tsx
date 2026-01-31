@@ -64,9 +64,18 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
                                 </p>
                             </div>
                         </div>
-                        <p className="text-gray-600 leading-relaxed text-lg">
+                        <p className="text-gray-600 leading-relaxed text-lg mb-8">
                             {product.fullDescription}
                         </p>
+                        {product.image && (
+                            <div className="rounded-2xl overflow-hidden shadow-2xl bg-gray-100 mb-4 aspect-video lg:aspect-auto">
+                                <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        )}
                     </div>
 
                     {/* Quick CTA */}

@@ -45,6 +45,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 {product.shortDescription}
             </p>
 
+            {product.image && (
+                <div className="mb-6 overflow-hidden rounded-xl bg-gray-100 aspect-video">
+                    <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                </div>
+            )}
+
             <div className="mb-6">
                 <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
                     <svg className="w-4 h-4 mr-2 text-navy-900" fill="currentColor" viewBox="0 0 20 20">

@@ -13,6 +13,7 @@ export interface Product {
         value: string;
     }[];
     icon: 'attendance' | 'security';
+    image?: string;
 }
 
 /**

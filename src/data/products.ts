@@ -35,40 +35,42 @@ export const products: Product[] = [
             { label: 'Nhiệt độ hoạt động', value: '-10°C đến 50°C' },
             { label: 'Tích hợp', value: 'REST API, SDK có sẵn' }
         ],
-        icon: 'attendance'
+        icon: 'attendance',
+        image: '/media/images/image_frs.png'
     },
     {
-        id: 'smart-security-surveillance',
-        name: 'Hệ Thống An Ninh & Giám Sát Thông Minh',
-        shortDescription: 'Nâng cao an ninh cơ sở với giám sát video thông minh được hỗ trợ bởi nhận dạng khuôn mặt thời gian thực và phân tích AI.',
-        fullDescription: 'Hệ thống An ninh & Giám sát Thông minh của chúng tôi biến đổi hạ tầng CCTV truyền thống thành mạng lưới an ninh thông minh. Hệ thống tận dụng thị giác máy tính và học sâu để phát hiện, theo dõi và xác định cá nhân trong thời gian thực, cho phép các biện pháp an ninh chủ động và phản ứng sự cố nhanh chóng. Lý tưởng cho cơ sở doanh nghiệp, tòa nhà chính phủ, sân bay và các khu vực an ninh cao.',
+        id: 'restricted-area-detection',
+        name: 'Hệ Thống Phát Hiện Người Trong Vùng Cấm',
+        shortDescription: 'Bảo vệ khu vực nhạy cảm với phát hiện xâm nhập tự động và cảnh báo thời gian thực được hỗ trợ bởi AI.',
+        fullDescription: 'Hệ thống Phát Hiện Người Trong Vùng Cấm của chúng tôi cung cấp giải pháp an ninh tiên tiến để giám sát và bảo vệ các khu vực hạn chế. Sử dụng công nghệ thị giác máy tính và học sâu, hệ thống tự động phát hiện sự hiện diện của con người trong các vùng được định nghĩa là cấm và kích hoạt cảnh báo tức thì. Lý tưởng cho nhà máy, khu công nghiệp, công trường xây dựng, và các khu vực nguy hiểm cần kiểm soát truy cập nghiêm ngặt.',
         features: [
-            'Phát hiện khuôn mặt thời gian thực trên nhiều luồng video',
-            'Đối chiếu danh sách theo dõi với cảnh báo tức thì',
-            'Phát hiện người lạ và tích hợp kiểm soát truy cập',
-            'Theo dõi đa camera và phân tích di chuyển',
-            'Tìm kiếm lịch sử theo khuôn mặt trên tất cả bản ghi',
-            'Phân tích hành vi để phát hiện hoạt động đáng ngờ',
-            'Tích hợp với hạ tầng CCTV hiện có',
-            'Tùy chọn triển khai đám mây và tại chỗ'
+            'Phát hiện người trong thời gian thực với độ chính xác cao',
+            'Định nghĩa vùng cấm linh hoạt trên video',
+            'Cảnh báo tức thì qua nhiều kênh (âm thanh, email, SMS, app)',
+            'Ghi lại video tự động khi phát hiện xâm nhập',
+            'Hoạt động 24/7 trong mọi điều kiện ánh sáng',
+            'Phân biệt người và vật thể để giảm cảnh báo sai',
+            'Tích hợp với hệ thống CCTV và kiểm soát truy cập hiện có',
+            'Dashboard giám sát tập trung cho nhiều vị trí'
         ],
         benefits: [
-            'Phát hiện và ngăn chặn mối đe dọa chủ động',
-            'Giảm 90% thời gian phản ứng an ninh',
-            'Nâng cao độ chính xác kiểm soát truy cập',
-            'Hỗ trợ điều tra pháp y với tìm kiếm khuôn mặt',
-            'Tối ưu hóa bố trí nhân viên an ninh',
-            'Duy trì tuân thủ quy định an ninh'
+            'Ngăn ngừa tai nạn lao động và xâm nhập trái phép',
+            'Giảm 95% thời gian phản ứng với sự cố',
+            'Tuân thủ quy định an toàn lao động',
+            'Giảm chi phí nhân lực giám sát an ninh',
+            'Bảo vệ tài sản và thiết bị quan trọng',
+            'Lưu trữ bằng chứng pháp lý cho điều tra'
         ],
         specifications: [
-            { label: 'Xử lý video', value: 'Đến 64 luồng đồng thời' },
-            { label: 'Phạm vi phát hiện', value: 'Đến 50 mét' },
-            { label: 'Dung lượng danh sách', value: 'Đến 1,000,000 khuôn mặt' },
-            { label: 'Độ trễ cảnh báo', value: '< 1 giây' },
-            { label: 'Định dạng video', value: 'H.264, H.265, MJPEG' },
-            { label: 'Tích hợp', value: 'ONVIF, REST API, RTSP' }
+            { label: 'Xử lý video', value: 'Đến 32 luồng đồng thời' },
+            { label: 'Độ chính xác phát hiện', value: '98.5%' },
+            { label: 'Thời gian phản ứng', value: '< 0.3 giây' },
+            { label: 'Hỗ trợ camera', value: 'Camera IP, Camera analog (qua DVR/NVR)' },
+            { label: 'Điều kiện hoạt động', value: 'Ban ngày, ban đêm, điều kiện thời tiết khắc nghiệt' },
+            { label: 'Tích hợp', value: 'REST API, Webhook, ONVIF, RTSP' }
         ],
-        icon: 'security'
+        icon: 'security',
+        image: '/media/images/savety.png'
     }
 ];
 
