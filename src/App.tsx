@@ -14,7 +14,13 @@ import {
  */
 function App() {
     return (
-        <Router>
+        <Router
+            basename={import.meta.env.BASE_URL}
+            future={{
+                v7_startTransition: true,
+                v7_relativeSplatPath: true
+            }}
+        >
             <ScrollToTop />
             <Routes>
                 <Route path="/" element={<HomePage />} />
