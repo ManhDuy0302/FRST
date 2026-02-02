@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import { ChatWidget } from '../chat';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -8,7 +9,7 @@ interface LayoutProps {
 
 /**
  * Main layout wrapper component
- * Includes Header, main content area, and Footer
+ * Includes Header, main content area, Footer, and Chat Widget
  */
 const Layout: React.FC<LayoutProps> = ({ children }) => {
     return (
@@ -18,6 +19,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 {children}
             </main>
             <Footer />
+            <ChatWidget />
         </div>
     );
 };

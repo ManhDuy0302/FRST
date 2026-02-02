@@ -27,8 +27,8 @@ const CompanyInfo: React.FC = () => {
                         <div>
                             <h4 className="font-semibold text-gray-900 mb-1">Địa Chỉ Văn Phòng</h4>
                             <p className="text-gray-600 text-sm">
-                                Trung Tâm Đổi Mới Sáng Tạo, Tầng 12<br />
-                                Quận Cầu Giấy, Hà Nội, Việt Nam
+                                Đại học FPT<br />
+                                Thạch Thất, Hà Nội, Việt Nam
                             </p>
                         </div>
                     </li>
@@ -56,8 +56,8 @@ const CompanyInfo: React.FC = () => {
                         <div>
                             <h4 className="font-semibold text-gray-900 mb-1">Điện Thoại</h4>
                             <p className="text-gray-600 text-sm">
-                                +84 (24) 1234 5678<br />
-                                +84 (24) 1234 5679
+                                +84 962522819<br />
+                                +84 912265162
                             </p>
                         </div>
                     </li>
@@ -71,7 +71,7 @@ const CompanyInfo: React.FC = () => {
                             <h4 className="font-semibold text-gray-900 mb-1">Giờ Làm Việc</h4>
                             <p className="text-gray-600 text-sm">
                                 Thứ Hai - Thứ Sáu: 8:30 - 17:30<br />
-                                Thứ Bảy - Chủ Nhật: Nghỉ
+                                Thứ Bảy - Chủ Nhật: Liên hệ 
                             </p>
                         </div>
                     </li>
