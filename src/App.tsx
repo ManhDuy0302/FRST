@@ -6,7 +6,8 @@ import {
     ProductsPage,
     ProductDetailPage,
     SolutionsPage,
-    ContactPage
+    ContactPage,
+    AdminChat
 } from './pages';
 
 /**
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/products/:productId" element={<ProductDetailPage />} />
                 <Route path="/solutions" element={<SolutionsPage />} />
                 <Route path="/contact" element={<ContactPage />} />
+                <Route path="/admin/chat" element={<AdminChat />} />
             </Routes>
         </Router>
     );
