@@ -146,18 +146,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose, onUnreadChange
 
     const reconnectSession = (sid: string) => {
         const unsub = subscribeToMessages(sid, (firebaseMessages: ChatMessage[]) => {
-            const agentMsgs: Message[] = firebaseMessages
-                .filter(m => m.sender === 'agent')
+            const firebaseMsgs: Message[] = firebaseMessages
+                .filter(m => m.timestamp)
                 .map(m => ({
                     id: m.id || String(Date.now()),
                     text: m.text,
-                    sender: 'agent' as const,
-                    timestamp: m.timestamp?.toDate() || new Date()
+                    sender: (m.sender === 'customer' ? 'user' : 'agent') as 'user' | 'agent',
+                    timestamp: m.timestamp!.toDate()
                 }));
             setMessages(prev => {
-                const merged = [...prev.filter(m => m.sender !== 'agent'), ...agentMsgs];
-                const unique = new Map(merged.map(m => [m.id, m]));
-                return Array.from(unique.values()).sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+                const botMsgs = prev.filter(m => m.sender === 'bot');
+                return [...botMsgs, ...firebaseMsgs].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
             });
         });
         unsubscribeRef.current = unsub;
@@ -222,8 +221,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose, onUnreadChange
     const handleSendMessage = async (text: string, isFromFAQ = false) => {
         if (!text.trim()) return;
 
-        const newMessage: Message = { id: Date.now(), text, sender: 'user', timestamp: new Date() };
-        setMessages(prev => [...prev, newMessage]);
+        if (chatMode === 'bot' || !sessionId) {
+            setMessages(prev => [...prev, { id: Date.now(), text, sender: 'user' as const, timestamp: new Date() }]);
+        }
         if (!isFromFAQ) setInputValue('');
         if (isFromFAQ) setShowFAQ(false);
 
