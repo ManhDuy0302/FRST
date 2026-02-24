@@ -1,14 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     subscribeToActiveSessions,
     subscribeToMessages,
     sendMessage,
     closeChatSession,
+    setTypingStatus,
+    subscribeToTypingStatus,
     ChatSession,
     ChatMessage
 } from '../firebase/chatService';
 
-const ADMIN_PASSWORD = 'rtfris2024';
+const ADMIN_PASSWORD = 'duy123';
 
 const AdminChat: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -18,42 +20,42 @@ const AdminChat: React.FC = () => {
     const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputValue, setInputValue] = useState('');
+    const [customerTyping, setCustomerTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const unsubMessagesRef = useRef<(() => void) | null>(null);
+    const unsubTypingRef = useRef<(() => void) | null>(null);
+    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // Subscribe to active sessions
     useEffect(() => {
         if (!isAuthenticated) return;
-
         const unsub = subscribeToActiveSessions((activeSessions) => {
             setSessions(activeSessions);
         });
-
         return () => unsub();
     }, [isAuthenticated]);
 
-    // Subscribe to messages of selected session
     useEffect(() => {
         if (!selectedSessionId) return;
 
-        if (unsubMessagesRef.current) {
-            unsubMessagesRef.current();
-        }
+        unsubMessagesRef.current?.();
+        unsubTypingRef.current?.();
 
         const unsub = subscribeToMessages(selectedSessionId, (msgs) => {
             setMessages(msgs);
         });
-
         unsubMessagesRef.current = unsub;
 
+        const unsubTyping = subscribeToTypingStatus(selectedSessionId, (typing) => {
+            setCustomerTyping(!!typing.customer);
+        });
+        unsubTypingRef.current = unsubTyping;
+
         return () => {
-            if (unsubMessagesRef.current) {
-                unsubMessagesRef.current();
-            }
+            unsubMessagesRef.current?.();
+            unsubTypingRef.current?.();
         };
     }, [selectedSessionId]);
 
-    // Auto-scroll messages
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
@@ -68,11 +70,21 @@ const AdminChat: React.FC = () => {
         }
     };
 
+    const handleAgentTyping = useCallback(() => {
+        if (!selectedSessionId) return;
+        setTypingStatus(selectedSessionId, 'agent', true);
+        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = setTimeout(() => {
+            if (selectedSessionId) setTypingStatus(selectedSessionId, 'agent', false);
+        }, 2000);
+    }, [selectedSessionId]);
+
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!inputValue.trim() || !selectedSessionId) return;
-
         try {
+            if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+            await setTypingStatus(selectedSessionId, 'agent', false);
             await sendMessage(selectedSessionId, inputValue, 'agent');
             setInputValue('');
         } catch (error) {
@@ -92,7 +104,6 @@ const AdminChat: React.FC = () => {
         }
     };
 
-    // Login screen
     if (!isAuthenticated) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
@@ -119,10 +130,7 @@ const AdminChat: React.FC = () => {
                                 <p className="text-red-400 text-sm mt-2">{passwordError}</p>
                             )}
                         </div>
-                        <button
-                            type="submit"
-                            className="w-full py-3 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors shadow-lg"
-                        >
+                        <button type="submit" className="w-full py-3 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors shadow-lg">
                             Đăng nhập
                         </button>
                     </form>
@@ -133,7 +141,6 @@ const AdminChat: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 flex">
-            {/* Sidebar — Session List */}
             <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
                 <div className="p-4 bg-emerald-700 text-white">
                     <h2 className="font-bold text-lg">💬 Quản lý Chat</h2>
@@ -153,8 +160,7 @@ const AdminChat: React.FC = () => {
                             <div
                                 key={session.id}
                                 onClick={() => setSelectedSessionId(session.id)}
-                                className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${selectedSessionId === session.id ? 'bg-emerald-50 border-l-4 border-l-emerald-500' : ''
-                                    }`}
+                                className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${selectedSessionId === session.id ? 'bg-emerald-50 border-l-4 border-l-emerald-500' : ''}`}
                             >
                                 <div className="flex justify-between items-start">
                                     <div className="flex items-center space-x-3">
@@ -171,10 +177,7 @@ const AdminChat: React.FC = () => {
                                         </div>
                                     </div>
                                     <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleCloseSession(session.id);
-                                        }}
+                                        onClick={(e) => { e.stopPropagation(); handleCloseSession(session.id); }}
                                         className="text-gray-400 hover:text-red-500 transition-colors p-1"
                                         title="Đóng phiên chat"
                                     >
@@ -194,7 +197,6 @@ const AdminChat: React.FC = () => {
                 </div>
             </div>
 
-            {/* Chat Area */}
             <div className="flex-grow flex flex-col">
                 {!selectedSessionId ? (
                     <div className="flex-grow flex items-center justify-center bg-gray-50">
@@ -208,7 +210,6 @@ const AdminChat: React.FC = () => {
                     </div>
                 ) : (
                     <>
-                        {/* Chat Header */}
                         <div className="p-4 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm">
                             <div className="flex items-center space-x-3">
                                 <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
@@ -222,13 +223,12 @@ const AdminChat: React.FC = () => {
                                     </h3>
                                     <p className="text-xs text-green-500 flex items-center">
                                         <span className="w-2 h-2 bg-green-400 rounded-full mr-1.5 animate-pulse"></span>
-                                        Đang trực tuyến
+                                        {customerTyping ? 'Đang nhập...' : 'Đang trực tuyến'}
                                     </p>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Messages */}
                         <div className="flex-grow overflow-y-auto p-6 space-y-4 bg-gray-50">
                             {messages.map((msg) => (
                                 <div
@@ -246,16 +246,31 @@ const AdminChat: React.FC = () => {
                                     </div>
                                 </div>
                             ))}
+
+                            {customerTyping && (
+                                <div className="flex justify-start">
+                                    <div className="p-3 rounded-2xl bg-white text-gray-500 text-sm border border-gray-200 shadow-sm rounded-tl-none">
+                                        <div className="flex space-x-1">
+                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Input */}
                         <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-gray-200">
                             <div className="flex items-center space-x-3">
                                 <input
                                     type="text"
                                     value={inputValue}
-                                    onChange={(e) => setInputValue(e.target.value)}
+                                    onChange={(e) => {
+                                        setInputValue(e.target.value);
+                                        handleAgentTyping();
+                                    }}
                                     placeholder="Nhập tin nhắn trả lời..."
                                     className="flex-grow px-4 py-3 bg-gray-100 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                                 />
