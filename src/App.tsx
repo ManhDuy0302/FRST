@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ScrollToTop from './components/layout/ScrollToTop';
+import { ChatWidget } from './components/chat';
 import {
     HomePage,
     AboutPage,
@@ -12,6 +13,7 @@ import {
 
 /**
  * Main App component with routing configuration
+ * ChatWidget is placed here (outside Routes) so it persists across page navigations
  */
 function App() {
     return (
@@ -32,6 +34,7 @@ function App() {
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/admin/chat" element={<AdminChat />} />
             </Routes>
+            <ChatWidget />
         </Router>
     );
 }
