@@ -89,26 +89,24 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
             }]);
 
             // Subscribe to real-time messages from agent
+            const seenAgentMsgIds = new Set<string>();
             const unsub = subscribeToMessages(newSessionId, (firebaseMessages: ChatMessage[]) => {
                 // Only show agent messages (customer messages are shown locally)
-                const agentMsgs: Message[] = firebaseMessages
-                    .filter(m => m.sender === 'agent')
-                    .map(m => ({
-                        id: m.id || Date.now(),
-                        text: m.text,
-                        sender: 'agent' as const,
-                        timestamp: m.timestamp?.toDate() || new Date()
-                    }));
-
-                setMessages(prev => {
-                    // Keep all non-agent messages & bot messages, then append agent messages
-                    const nonAgentMsgs = prev.filter(m => m.sender !== 'agent');
-                    return [...nonAgentMsgs, ...agentMsgs].sort((a, b) => {
-                        const timeA = a.timestamp instanceof Date ? a.timestamp.getTime() : 0;
-                        const timeB = b.timestamp instanceof Date ? b.timestamp.getTime() : 0;
-                        return timeA - timeB;
+                const newAgentMsgs: Message[] = firebaseMessages
+                    .filter(m => m.sender === 'agent' && m.id && !seenAgentMsgIds.has(m.id))
+                    .map(m => {
+                        seenAgentMsgIds.add(m.id!);
+                        return {
+                            id: m.id || Date.now(),
+                            text: m.text,
+                            sender: 'agent' as const,
+                            timestamp: m.timestamp?.toDate() || new Date()
+                        };
                     });
-                });
+
+                if (newAgentMsgs.length > 0) {
+                    setMessages(prev => [...prev, ...newAgentMsgs]);
+                }
             });
 
             unsubscribeRef.current = unsub;
