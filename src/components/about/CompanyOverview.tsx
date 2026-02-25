@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 /**
  * Animated canvas background with neural network / AI nodes effect
@@ -40,8 +41,8 @@ export const AIBackground: React.FC = () => {
             type: 'hub' | 'node'; // hub nodes are slightly larger
         }
 
-        const NODE_COUNT = 100;
-        const CONNECTION_DIST = 200;
+        const NODE_COUNT = 250;
+        const CONNECTION_DIST = 120;
 
         const nodes: Node[] = Array.from({ length: NODE_COUNT }, () => ({
             x: Math.random() * width,
@@ -223,33 +224,60 @@ const cardData = [
         title: 'Sứ Mệnh',
         description:
             'Cung cấp giải pháp nhận dạng khuôn mặt tiên tiến, giúp doanh nghiệp nâng cao an ninh và tối ưu quản lý nhân sự thông qua công nghệ AI.',
+        detailedDescription:
+            'Chúng tôi tin rằng mọi tổ chức đều xứng đáng được tiếp cận công nghệ AI tiên tiến nhất. RT-FRIS cam kết thu hẹp khoảng cách giữa nghiên cứu học thuật và ứng dụng thực tế, mang đến giải pháp nhận dạng khuôn mặt đạt chuẩn quốc tế với chi phí hợp lý cho doanh nghiệp Việt Nam.',
+        features: [
+            'Nghiên cứu và phát triển sản phẩm AI "Made in Vietnam"',
+            'Tối ưu chi phí triển khai cho doanh nghiệp vừa và nhỏ',
+            'Đồng hành tư vấn giải pháp phù hợp từng ngành nghề',
+            'Hỗ trợ kỹ thuật 24/7 xuyên suốt vòng đời sản phẩm',
+        ],
         accentFrom: '#58a6ff',
         accentTo: '#a8d8ff',
         borderColor: 'rgba(88,166,255,0.25)',
         glowColor: 'rgba(88,166,255,0.08)',
         delay: 'delay-100',
+        anchorId: 'su-menh',
     },
     {
         icon: IconEye,
         title: 'Tầm Nhìn',
         description:
             'Trở thành đơn vị hàng đầu trong lĩnh vực Thị giác Máy tính tại Việt Nam, mang công nghệ AI đẳng cấp thế giới phục vụ mọi tổ chức.',
+        detailedDescription:
+            'Đến năm 2027, RT-FRIS hướng đến vị thế dẫn đầu thị trường nhận dạng khuôn mặt tại Việt Nam. Chúng tôi kiến tạo một hệ sinh thái AI toàn diện — từ phần cứng edge computing đến nền tảng cloud, phục vụ đa ngành từ an ninh, giáo dục đến tài chính.',
+        features: [
+            'Top 3 đơn vị cung cấp giải pháp nhận dạng khuôn mặt tại VN',
+            'Mở rộng sang thị trường Đông Nam Á từ 2027',
+            'Xây dựng nền tảng AI-as-a-Service cho doanh nghiệp',
+            'Hợp tác nghiên cứu với các trường đại học hàng đầu',
+        ],
         accentFrom: '#34d399',
         accentTo: '#6ee7b7',
         borderColor: 'rgba(52,211,153,0.25)',
         glowColor: 'rgba(52,211,153,0.08)',
         delay: 'delay-200',
+        anchorId: 'tam-nhin',
     },
     {
         icon: IconDiamond,
         title: 'Giá Trị Cốt Lõi',
         description:
             'Cam kết chất lượng vượt trội: độ chính xác cao nhất, bảo mật tuyệt đối, và luôn đồng hành cùng khách hàng trên hành trình chuyển đổi số.',
+        detailedDescription:
+            'Mọi quyết định tại RT-FRIS đều dựa trên 4 giá trị nền tảng: Chính xác — không thỏa hiệp về chất lượng. Bảo mật — dữ liệu khách hàng là tối thượng. Đổi mới — luôn cập nhật công nghệ mới nhất. Tận tâm — thành công của khách hàng là thành công của chúng tôi.',
+        features: [
+            'Chính xác: Benchmark liên tục, đảm bảo ≥99.5% accuracy',
+            'Bảo mật: Mã hóa AES-256, tuân thủ quy định dữ liệu cá nhân',
+            'Đổi mới: R&D chiếm 40% nguồn lực, cập nhật mô hình hàng quý',
+            'Tận tâm: SLA cam kết uptime 99.9%, phản hồi trong 2 giờ',
+        ],
         accentFrom: '#a78bfa',
         accentTo: '#c4b5fd',
         borderColor: 'rgba(167,139,250,0.25)',
         glowColor: 'rgba(167,139,250,0.08)',
         delay: 'delay-300',
+        anchorId: 'gia-tri',
     },
 ];
 
@@ -259,6 +287,34 @@ const cardData = [
  * Company Overview component — redesigned with hero banner, mission/vision/values, and stats
  */
 const CompanyOverview: React.FC = () => {
+    const [expandedCard, setExpandedCard] = useState<number | null>(null);
+    const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+    const location = useLocation();
+
+    const toggleCard = (index: number) => {
+        setExpandedCard(prev => (prev === index ? null : index));
+    };
+
+    // Auto-scroll and auto-expand when navigating with hash
+    useEffect(() => {
+        const hash = location.hash.replace('#', '');
+        if (!hash) return;
+
+        const cardIndex = cardData.findIndex(c => c.anchorId === hash);
+        if (cardIndex === -1) return;
+
+        // Expand the target card
+        setExpandedCard(cardIndex);
+
+        // Scroll to it after a brief delay for rendering
+        setTimeout(() => {
+            const el = document.getElementById(hash);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 300);
+    }, [location.hash]);
+
     return (
         <section className="relative py-20 md:py-28 lg:py-32 overflow-hidden">
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -328,39 +384,57 @@ const CompanyOverview: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-16 md:mb-20">
                     {cardData.map((card, idx) => {
                         const Icon = card.icon;
+                        const isExpanded = expandedCard === idx;
+                        const isHovered = hoveredCard === idx;
+                        const isHighlighted = isExpanded || isHovered;
                         return (
                             <div
                                 key={idx}
+                                id={card.anchorId}
                                 className={`animate-fade-in-up ${card.delay} group`}
                             >
                                 <div
-                                    className="relative rounded-2xl p-8 md:p-9 h-full transition-all duration-500 hover:-translate-y-2"
+                                    className="relative rounded-2xl p-8 md:p-9 h-full transition-all duration-500 hover:-translate-y-2 cursor-pointer"
                                     style={{
                                         background: 'rgba(14, 28, 72, 0.55)',
                                         backdropFilter: 'blur(20px)',
                                         WebkitBackdropFilter: 'blur(20px)',
-                                        border: `1px solid ${card.borderColor}`,
-                                        boxShadow: `0 8px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)`,
+                                        border: `1px solid ${isHighlighted ? card.accentFrom : card.borderColor}`,
+                                        boxShadow: isHighlighted
+                                            ? `0 12px 50px rgba(0,0,0,0.4), 0 0 30px ${card.glowColor}, inset 0 1px 0 rgba(255,255,255,0.06)`
+                                            : `0 8px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)`,
                                     }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.borderColor = card.accentFrom;
-                                        e.currentTarget.style.boxShadow = `0 12px 50px rgba(0,0,0,0.4), 0 0 30px ${card.glowColor}, inset 0 1px 0 rgba(255,255,255,0.06)`;
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.borderColor = card.borderColor;
-                                        e.currentTarget.style.boxShadow = `0 8px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)`;
-                                    }}
+                                    onClick={() => toggleCard(idx)}
+                                    onMouseEnter={() => setHoveredCard(idx)}
+                                    onMouseLeave={() => setHoveredCard(null)}
                                 >
-                                    {/* Icon circle */}
-                                    <div
-                                        className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 transition-transform duration-500 group-hover:scale-110"
-                                        style={{
-                                            background: `linear-gradient(135deg, ${card.accentFrom}22, ${card.accentTo}18)`,
-                                            border: `1px solid ${card.borderColor}`,
-                                            color: card.accentFrom,
-                                        }}
-                                    >
-                                        <Icon className="w-7 h-7" />
+                                    {/* Header row */}
+                                    <div className="flex items-start justify-between mb-6">
+                                        {/* Icon circle */}
+                                        <div
+                                            className="w-14 h-14 rounded-xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110"
+                                            style={{
+                                                background: `linear-gradient(135deg, ${card.accentFrom}22, ${card.accentTo}18)`,
+                                                border: `1px solid ${card.borderColor}`,
+                                                color: card.accentFrom,
+                                            }}
+                                        >
+                                            <Icon className="w-7 h-7" />
+                                        </div>
+
+                                        {/* Chevron indicator */}
+                                        <div
+                                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isExpanded ? 'rotate-180' : ''
+                                                }`}
+                                            style={{
+                                                background: isExpanded ? `${card.accentFrom}25` : 'rgba(255,255,255,0.08)',
+                                                color: isExpanded ? card.accentFrom : 'rgba(200,220,255,0.5)',
+                                            }}
+                                        >
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        </div>
                                     </div>
 
                                     {/* Title */}
@@ -381,9 +455,48 @@ const CompanyOverview: React.FC = () => {
                                         {card.description}
                                     </p>
 
+                                    {/* Expandable detail section */}
+                                    <div
+                                        className="transition-all duration-500 ease-in-out overflow-hidden"
+                                        style={{
+                                            maxHeight: isExpanded ? '500px' : '0px',
+                                            opacity: isExpanded ? 1 : 0,
+                                            marginTop: isExpanded ? '16px' : '0px',
+                                        }}
+                                    >
+                                        <div
+                                            className="pt-4"
+                                            style={{ borderTop: `1px solid ${card.borderColor}` }}
+                                        >
+                                            <p
+                                                className="text-sm leading-relaxed mb-4"
+                                                style={{ color: 'rgba(200,220,255,0.72)' }}
+                                            >
+                                                {card.detailedDescription}
+                                            </p>
+
+                                            <div className="space-y-2.5">
+                                                {card.features.map((feature, fIdx) => (
+                                                    <div key={fIdx} className="flex items-start gap-2.5">
+                                                        <svg
+                                                            className="w-5 h-5 flex-shrink-0 mt-0.5"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            stroke={card.accentFrom}
+                                                            strokeWidth={2}
+                                                        >
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                        </svg>
+                                                        <span className="text-sm leading-relaxed" style={{ color: 'rgba(200,220,255,0.8)' }}>{feature}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     {/* Bottom accent line */}
                                     <div
-                                        className="absolute bottom-0 left-8 right-8 h-[2px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                                        className={`absolute bottom-0 left-8 right-8 h-[2px] rounded-full transition-opacity duration-500 ${isExpanded ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
                                         style={{
                                             background: `linear-gradient(90deg, transparent, ${card.accentFrom}, transparent)`,
                                         }}
